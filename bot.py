@@ -1,4 +1,5 @@
 #source for most of this: https://realpython.com/how-to-make-a-discord-bot-python/
+import asyncio
 
 import discord
 import random
@@ -24,17 +25,27 @@ class InteractionBot(discord.Client):
 
     async def match_loop(self):
         await self.wait_until_ready()
-        last_hour_matched = -1
+        #Chooses a time from 19:00 to 23:59 to match people up
+        next_match_hour=random.randint(19,23)
+        next_match_minute=random.randint(0,59)
 
         while not self.is_closed():
             now = time.localtime()
-            is_night = 19 <= now.tm_hour <= 23 or 0 <= now.tm_hour <= 1 # 19:00 to 01:59
 
-            if is_night and last_hour_matched != now.tm_hour:
-                last_hour_matched = now.tm_hour
+            if next_match_hour==now.tm_hour and next_match_minute==now.tm_min:
+                print(f"it is now {now.tm_hour}:{now.tm_min}; sending matches!")
                 await self.match_people()
+                next_match_hour = random.randint(19, 23)
+                next_match_minute = random.randint(0, 59)
+                # await asyncio.sleep(12*60*60) # Wait 12 hours
+                # Note that new matches will be sent at the first instance of the next match time.
+                # e.g. if the new notification time is later than the current time, the new matches
+                # will be sent on the same day; if the new time is before the current time, the new
+                # matches will be sent on the next day.
+            else:
+                print(f"it is now {now.tm_hour}:{now.tm_min}; waiting until {next_match_hour}:{next_match_minute}")
 
-            await asyncio.sleep(30*60) # check every 30*60 seconds, can make more often
+            await asyncio.sleep(30) # check every 30 seconds
 
 
     async def match_people(self):
