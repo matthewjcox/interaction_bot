@@ -1,4 +1,4 @@
-#source for most of this: https://realpython.com/how-to-make-a-discord-bot-python/
+#source for some of this: https://realpython.com/how-to-make-a-discord-bot-python/
 import asyncio
 
 import discord
@@ -26,13 +26,13 @@ class InteractionBot(discord.Client):
     async def match_loop(self):
         await self.wait_until_ready()
 
-        #Chooses a time from 19:00 to 23:59 EDT to match people up
+        #Chooses a time from 19:00 to 23:59 ET to match people up
         next_match_hour=random.randint(19,23)
         next_match_minute=random.randint(0,59)
 
-        # Use for debugging to force a match at a time very soon
-        # next_match_hour=13
-        # next_match_minute=42
+        # Use for debugging to force a match at a time very soon:
+        # next_match_hour=14
+        # next_match_minute=9
 
         while not self.is_closed():
             now = time.localtime()
@@ -41,6 +41,7 @@ class InteractionBot(discord.Client):
                 await self.match_people()
                 next_match_hour = random.randint(19, 23)
                 next_match_minute = random.randint(0, 59)
+
                 print(f'Will send next matches tomorrow at {next_match_hour:02d}:{next_match_minute:02d}')
                 await asyncio.sleep(12*60*60) # Wait 12 hours, to force sending matches on the next day.
 
@@ -51,7 +52,6 @@ class InteractionBot(discord.Client):
 
 
     async def match_people(self):
-        # print('Matching!')
         for guild in client.guilds:
             if guild.name == GUILD:
                 break
@@ -72,10 +72,9 @@ class InteractionBot(discord.Client):
                 break
             groups_who_bumped_into_eachother.append((members_to_contact[0],members_to_contact[1]))
             members_to_contact=members_to_contact[2:]
-        # print('Matches made!')
-        print([[get_name(member) for member in group] for group in groups_who_bumped_into_eachother])
+        print([[get_name(member) for member in group] for group in groups_who_bumped_into_eachother]) # Print matched groups
 
-        #Message each person about who else they bumped into:
+        # Message each person about who else they bumped into:
         for group in groups_who_bumped_into_eachother:
             for member in group:
                 group_minus_member=[get_name(i) for i in group if i != member]
@@ -92,7 +91,6 @@ class InteractionBot(discord.Client):
                     await member.dm_channel.send(message)
                 except:
                     pass
-        # print('Match messages sent!')
 
 
 intents = discord.Intents.default()
