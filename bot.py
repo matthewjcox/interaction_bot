@@ -31,8 +31,8 @@ class InteractionBot(discord.Client):
         next_match_minute=random.randint(0,59)
 
         # Use for debugging to force a match at a time very soon
-        # next_match_hour=21
-        # next_match_minute=20
+        # next_match_hour=13
+        # next_match_minute=42
 
         while not self.is_closed():
             now = time.localtime()
@@ -42,12 +42,8 @@ class InteractionBot(discord.Client):
                 next_match_hour = random.randint(19, 23)
                 next_match_minute = random.randint(0, 59)
                 print(f'Will send next matches tomorrow at {next_match_hour:02d}:{next_match_minute:02d}')
-                await asyncio.sleep(12*60*60) # Wait 12 hours
+                await asyncio.sleep(12*60*60) # Wait 12 hours, to force sending matches on the next day.
 
-                # Note that new matches will be sent at the first instance of the next match time.
-                # e.g. if the new notification time is later than the current time, the new matches
-                # will be sent on the same day; if the new time is before the current time, the new
-                # matches will be sent on the next day.
             else:
                 print(f"it is now {now.tm_hour:02d}:{now.tm_min:02d}; waiting until {next_match_hour:02d}:{next_match_minute:02d}")
 
@@ -77,6 +73,7 @@ class InteractionBot(discord.Client):
             groups_who_bumped_into_eachother.append((members_to_contact[0],members_to_contact[1]))
             members_to_contact=members_to_contact[2:]
         # print('Matches made!')
+        print([[get_name(member) for member in group] for group in groups_who_bumped_into_eachother])
 
         #Message each person about who else they bumped into:
         for group in groups_who_bumped_into_eachother:
