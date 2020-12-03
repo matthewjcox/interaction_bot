@@ -27,19 +27,20 @@ class InteractionBot(discord.Client):
         await self.wait_until_ready()
 
         #Chooses a time from 19:00 to 23:59 ET to match people up
-        next_match_hour=random.randint(17.20)
+        next_match_hour=random.randint(17,20)
         next_match_minute=random.randint(0,59)
 
         # Use for debugging to force a match at a time very soon:
         # next_match_hour=14
         # next_match_minute=9
-
+        
+        print(f'First match will be at: {next_match_hour:02d}:{next_match_minute:02d}')
         while not self.is_closed():
             now = time.localtime()
             if next_match_hour==now.tm_hour and next_match_minute==now.tm_min:
                 print(f"it is now {now.tm_hour:02d}:{now.tm_min:02d}; sending matches!")
                 await self.match_people()
-                next_match_hour = random.randint(17.20)
+                next_match_hour = random.randint(17,20)
                 next_match_minute = random.randint(0, 59)
 
                 print(f'Will send next matches tomorrow at {next_match_hour:02d}:{next_match_minute:02d}')
